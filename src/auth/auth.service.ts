@@ -61,11 +61,11 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-        expiresIn: '5m',
+        expiresIn: '180m',
       }),
       this.jwtService.signAsync(payload, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-        expiresIn: '20m',
+        expiresIn: '3d',
       }),
     ]);
 
