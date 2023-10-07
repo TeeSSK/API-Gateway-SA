@@ -1,7 +1,7 @@
-import { Controller, Get, UseGuards, Inject, Req } from '@nestjs/common';
+import { Controller, Get, UseGuards, Inject, Req, Res } from '@nestjs/common';
 import { GoogleAuthGuard } from './guards/google-oauth.guard';
 import { AuthService } from './auth.service';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { UserDetails } from './interface/user-principle.interface';
 import { AccessTokenGuard } from './guards/accessToken.guard';
 import { RefreshTokenGuard } from './guards/refreshToken.guard';
@@ -14,14 +14,32 @@ export class AuthController {
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  handleRedirect(@Req() req: Request) {
+  async handleRedirect(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     console.log('handleRedirect');
     if (!req.user) {
       return 'No user from google';
     }
     const user = req.user as UserDetails;
+    const cookieDomain = process.env.DOMAIN;
+    const frontendURL = process.env.FRONTEND_URL;
     console.log(user);
-    return this.authService.login(user);
+    const token = await this.authService.login(user);
+    res.cookie('refreshToken', token.refreshToken, {
+      sameSite: 'none',
+      secure: true,
+      path: '/',
+      domain: cookieDomain,
+    });
+    res.cookie('accessToken', token.accessToken, {
+      sameSite: 'none',
+      secure: true,
+      path: '/',
+      domain: cookieDomain,
+    });
+    res.redirect(frontendURL);
   }
 
   @UseGuards(AccessTokenGuard)
