@@ -13,6 +13,14 @@ export class AuthService {
     private usersService: UsersService,
   ) {}
 
+  async getMe(userId: string) {
+    const user = await this.usersService.findById(userId);
+    if (!user) throw new ForbiddenException('Access Denied');
+    const email = user.email;
+    const displayName = user.displayName;
+    return { email, displayName };
+  }
+
   async login(user: UserDetails) {
     console.log('login');
     let userExists = await this.usersService.findByEmail(user.email);
@@ -38,10 +46,15 @@ export class AuthService {
       user.refreshToken,
       refreshToken,
     );
+    console.log('refreshTokens', refreshTokenMatches);
     if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
 
     const tokens = await this.getTokens(user.id, user.email);
-    return { accessToken: tokens.accessToken };
+    console.log('renew', tokens);
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    };
   }
 
   hashData(data: string) {
