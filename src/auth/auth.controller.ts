@@ -12,6 +12,13 @@ export class AuthController {
     @Inject('AUTH_SERVICE') private readonly authService: AuthService,
   ) {}
 
+  @Get('google/login')
+  @UseGuards(GoogleAuthGuard)
+  googleLogin() {
+    console.log('googleLogin');
+    return 'Logged In';
+  }
+
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
   async handleRedirect(
@@ -27,6 +34,7 @@ export class AuthController {
     const frontendURL = process.env.FRONTEND_URL;
     console.log(user);
     const token = await this.authService.login(user);
+    console.log(token);
     res.cookie('refreshToken', token.refreshToken, {
       sameSite: 'none',
       secure: true,
@@ -45,19 +53,21 @@ export class AuthController {
   @UseGuards(AccessTokenGuard)
   @Get('me')
   getProfile(@Req() req: Request) {
-    console.log(req);
-    return req.user;
+    console.log(req.user);
+    const id = req.user['id'];
+    return this.authService.getMe(id);
   }
 
   @UseGuards(AccessTokenGuard)
   @Get('logout')
-  logout(@Req() req: Request) {
-    console.log(req);
-    // this.authService.logout(req.user['sub']);
+  async logout(@Req() req: Request) {
+    console.log('logout', req.user);
+    await this.authService.logout(req.user['id']);
+    return { msg: 'Logged out' };
   }
 
   @UseGuards(RefreshTokenGuard)
-  @Get('refresh')
+  @Get('refreshToken')
   refreshTokens(@Req() req: Request) {
     console.log(req.user);
     const userId = req.user['id'];
