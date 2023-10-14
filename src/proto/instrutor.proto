@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package subject;
+
+import "src/proto/entity.proto";
+
+service InstructorService {
+	rpc PaginateInstructor(PaginateInstructorRequest) returns (PaginateInstructorResponse);
+	rpc GetInstructorbyId(GetInstructorbyIdRequest) returns (GetInstructorbyIdResponse);
+	rpc CreateInstructor(CreateInstructorRequest) returns (CreateInstructorResponse);
+	rpc UpdateInstructor(UpdateInstructorRequest) returns (UpdateInstructorResponse);
+	rpc DeleteInstructor(DeleteInstructorRequest) returns (DeleteInstructorResponse);
+}
+
+message PaginateInstructorRequest {
+	int64 page_number = 1;
+	string name = 2;
+	string faculty = 3;
+}
+
+message PaginateInstructorResponse {
+	int64 page_number = 1;
+	int64 per_page = 2;
+	int64 page_count = 3;
+	int64 total_count = 4;
+	repeated InstructorMetadata instructors = 5;
+}
+
+message GetInstructorbyIdRequest {
+	int64 id = 1;
+}
+
+message GetInstructorbyIdResponse {
+	Instructor instructor = 1;
+}
+
+message CreateInstructorRequest {
+	string full_name = 2;
+	string faculty = 3;
+	string email = 4;
+	string phone_number = 5;
+	string website = 6;
+	string degree = 7;
+
+	bool is_admin = 99;
+}
+
+message CreateInstructorResponse {
+	Instructor instructor = 1;
+}
+
+message UpdateInstructorRequest {
+	int64 id = 1;
+	string full_name = 2;
+	string faculty = 3;
+	string email = 4;
+	string phone_number = 5;
+	string website = 6;
+	string degree = 7;
+
+	bool is_admin = 99;
+}
+
+message UpdateInstructorResponse {
+	Instructor instructor = 1;
+}
+
+message DeleteInstructorRequest {
+	int64 id = 1;
+
+	bool is_admin = 99;
+}
+
+message DeleteInstructorResponse {
+	Instructor instructor = 1;
+}

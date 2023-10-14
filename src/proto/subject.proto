@@ -1,0 +1,138 @@
+syntax = "proto3";
+
+package subject;
+
+import "src/proto/entity.proto";
+
+service SubjectService {
+	rpc PaginateSubjects(PaginateSubjectRequest) returns (PaginateSubjectResponse);
+	rpc GetSubjectById(GetSubjectByIdRequest) returns (GetSubjectByIdResponse);
+	rpc ValidateSubjectId(ValidateSubjectIdRequest) returns (ValidateSubjectIdResponse);
+	rpc CreateSubject(CreateSubjectRequest) returns (CreateSubjectResponse);
+	rpc UpdateSubject(UpdateSubjectRequest) returns (UpdateSubjectResponse);
+	rpc DeleteSubject(DeleteSubjectRequest) returns (DeleteSubjectResponse);
+	rpc CreateSection(CreateSectionRequest) returns (CreateSectionResponse);
+	rpc UpdateSection(UpdateSectionRequest) returns (UpdateSectionResponse);
+	rpc DeleteSection(DeleteSectionRequest) returns (DeleteSectionResponse);
+	rpc PaginatePostBySubject(PaginatePostBySubjectRequest) returns (PaginatePostBySubjectResponse);
+	rpc PaginateFileBySubject(PaginateFileBySubjectRequest) returns (PaginateFileBySubjectResponse);
+}
+
+message PaginateSubjectRequest {
+	int64 page_number = 1;
+	string subject_id = 2;
+	string name = 3;
+	repeated int64 semester_whitelist = 4;
+	int64 year_range_start = 5;
+	int64 year_range_stop = 6;
+}
+
+message PaginateSubjectResponse {
+	int64 page_number = 1;
+	int64 per_page = 2;
+	int64 page_count = 3;
+	int64 total_count = 4;
+	repeated SubjectMetadata subjects = 5;
+}
+
+message ValidateSubjectIdRequest {
+	int64 id = 1;
+
+	bool is_admin = 99;
+}
+
+message ValidateSubjectIdResponse {
+	bool valid = 1;
+}
+
+message GetSubjectByIdRequest {
+	int64 id = 1;
+}
+
+message GetSubjectByIdResponse {
+	Subject subject = 1;
+}
+
+message CreateSubjectRequest {
+	string subject_id = 1;
+	string name = 2;
+	int64 semester = 3;
+	int64 year = 4;
+	string faculty = 5;
+	string description = 6;
+
+	bool is_admin = 99;
+}
+
+message CreateSubjectResponse {
+	Subject subject = 1;
+}
+
+message UpdateSubjectRequest {
+	int64 id = 1;
+	string subject_id = 2;
+	string name = 3;
+	int64 semester = 4;
+	int64 year = 5;
+	string faculty = 6;
+	string description = 7;
+	repeated string prerequisites = 8;
+
+	bool is_admin = 99;
+}
+
+message UpdateSubjectResponse {
+	Subject subject = 1;
+}
+
+message DeleteSubjectRequest {
+	int64 id = 1;
+
+	bool is_admin = 99;
+}
+
+message DeleteSubjectResponse {
+	Subject subject = 1;
+}
+
+message CreateSectionRequest {
+	int64 subject_id = 1;
+	int64 number = 2;
+	string description = 3;
+
+	bool is_admin = 99;
+}
+
+message CreateSectionResponse {
+	Section section = 1;
+}
+
+message UpdateSectionRequest {
+	int64 id = 1;
+	int64 number = 3;
+	string description = 4;
+
+	bool is_admin = 99;
+}
+
+message UpdateSectionResponse {
+	Section section = 1;
+}
+
+message DeleteSectionRequest {
+	int64 id = 1;
+
+	bool is_admin = 99;
+}
+
+message DeleteSectionResponse {
+	Section section =1;
+}
+
+message PaginatePostBySubjectRequest {}
+
+message PaginatePostBySubjectResponse {}
+
+message PaginateFileBySubjectRequest {}
+
+message PaginateFileBySubjectResponse {}

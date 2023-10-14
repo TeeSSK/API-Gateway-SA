@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package subject;
+
+message Section {
+	int64 id = 1;
+	int64 subject_id = 2;
+	int64 number = 3;
+	string description = 4;
+	repeated int64 instructor_ids = 5;
+}
+
+message Subject {
+	int64 id = 1;
+	string subject_id = 2;
+	string name = 3;
+	int64 semester = 4;
+	repeated int64 section_ids = 5;
+	int64 year = 6;
+	string faculty = 7;
+	string description = 8;
+	repeated string prerequisites = 9;
+}
+
+message SubjectMetadata {
+	int64 id = 1;
+	string subject_id = 2;
+	string name = 3;
+	int64 semester = 4;
+	int64 year = 5;
+}
+
+message Instructor {
+	int64 id = 1;
+	string full_name = 2;
+	string faculty = 3;
+	string email = 4;
+	string phone_number = 5;
+	string website = 6;
+	string degree = 7;
+	repeated int64 taught_subject_ids = 8;
+}
+
+message InstructorMetadata {
+	int64 id = 1;
+	string full_name = 2;
+}
+
+message PostMetadata {
+
+}
+
+message FileMetadata {
+
+}
