@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-export const protobufPackage = 'subject';
+export const protobufPackage = "subject";
 
 export interface Section {
   id: number;
@@ -46,8 +46,10 @@ export interface InstructorMetadata {
   fullName: string;
 }
 
-export interface PostMetadata {}
+export interface PostMetadata {
+}
 
-export interface FileMetadata {}
+export interface FileMetadata {
+}
 
-export const SUBJECT_PACKAGE_NAME = 'subject';
+export const SUBJECT_PACKAGE_NAME = "subject";
