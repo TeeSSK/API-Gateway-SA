@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { SubjectsService } from './subjects.service';
+import { SubjectService } from './subjects.service';
 import {
   CreateSubjectRequest,
   GetSubjectByIdRequest,
@@ -7,7 +7,7 @@ import {
 
 @Controller('subjects')
 export class SubjectsController {
-  constructor(private readonly subjectsService: SubjectsService) {}
+  constructor(private readonly subjectsService: SubjectService) {}
 
   @Post()
   create(@Body() createSubjectRequest: CreateSubjectRequest) {
@@ -15,9 +15,14 @@ export class SubjectsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    console.log('findbyid', id);
+  async findOne(@Param('id') id: string) {
     const subjectId: GetSubjectByIdRequest = { id: Number(id) };
-    return this.subjectsService.findById(subjectId);
+    const subject = await this.subjectsService.findById(subjectId);
+    return subject;
+  }
+
+  @Get()
+  findAll() {
+    return 'This action returns all subjects';
   }
 }
