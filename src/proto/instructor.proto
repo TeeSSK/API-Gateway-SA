@@ -1,8 +1,12 @@
 syntax = "proto3";
 
-package subject;
+option go_package = "./subject";
 
-import "src/proto/entity.proto";
+import "entity.proto";
+option java_multiple_files = true;
+option java_package = "org.example";
+
+package subject;
 
 service InstructorService {
 	rpc PaginateInstructor(PaginateInstructorRequest) returns (PaginateInstructorResponse);
