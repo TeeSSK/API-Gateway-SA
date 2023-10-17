@@ -24,11 +24,15 @@ export class SubjectsController {
   @UseGuards(AccessTokenGuard)
   create(
     @Req() req: Request,
-    @Body() createSubjectRequest: CreateSubjectRequest,
+    @Body() createSubjectRequest: Omit<CreateSubjectRequest, 'isAdmin'>,
   ) {
     console.log(req.user);
     const isAdmin = req.user['isAdmin'];
-    return this.subjectsService.create(createSubjectRequest, isAdmin);
+    const createSubjectDto: CreateSubjectRequest = {
+      ...createSubjectRequest,
+      isAdmin,
+    };
+    return this.subjectsService.create(createSubjectDto, isAdmin);
   }
 
   @Get(':id')
