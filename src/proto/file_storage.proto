@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package filestorage;
+
+option go_package = "./filestorage";
+
+message FileUploadRequest {
+  bytes file_content         = 1;
+  optional string file_name  = 2;
+  optional string user_id    = 3;
+  optional string subject_id = 4;
+}
+
+message FileUploadResponse {
+  string file_id = 1;
+  uint32 size    = 2;
+}
+
+message FileDownloadRequest {
+  string file_id = 1;
+  string user_id = 2;
+}
+
+message FileDownloadResponse {
+  bytes file_content        = 1;
+  optional uint32 size      = 2;
+  optional string file_name = 3;
+}
+
+message FileDeleteRequest {
+  string file_id = 1;
+  string user_id = 2;
+}
+
+message FileDeleteResponse {
+  string file_id = 1;
+}
+
+message ShareFileRequest {
+  string file_id                      = 1;
+  string user_id                      = 2;
+  repeated string share_with_user_ids = 3;
+}
+
+message ShareFileResponse {
+  string file_id = 1;
+}
+
+message CreateBookmarkFileRequest {
+  string file_id = 1;
+  string user_id = 2;
+}
+
+message CreateBookmarkFileResponse {
+  string file_id = 1;
+}
+
+message DeleteBookmarkFileRequest {
+  string file_id = 1;
+  string user_id = 2;
+}
+
+message DeleteBookmarkFileResponse {
+  string file_id = 1;
+}
+
+message GetBookmarkFilesRequest {
+  string user_id = 1;
+}
+
+message GetBookmarkFilesResponse {
+  repeated string file_ids = 1;
+}
+
+message SearchFileRequest {
+  string subject_id    = 1;
+  string owner_user_id = 2;
+  string file_name     = 3;
+}
+
+message SearchFileResponse {
+  repeated string file_ids       = 1;
+  repeated string file_names     = 2;
+  repeated string subject_ids    = 3;
+  repeated string owner_user_ids = 4;
+}
+
+service FileUploadService {
+  rpc Upload(stream FileUploadRequest) returns (FileUploadResponse);
+  rpc Download(FileDownloadRequest) returns (stream FileDownloadResponse);
+  rpc Delete(FileDeleteRequest) returns (FileDeleteResponse);
+  rpc ShareFile(ShareFileRequest) returns (ShareFileResponse);
+  rpc CreateBookmarkFile(CreateBookmarkFileRequest)
+      returns (CreateBookmarkFileResponse);
+  rpc DeleteBookmarkFile(DeleteBookmarkFileRequest)
+      returns (DeleteBookmarkFileResponse);
+  rpc GetBookmarkFiles(GetBookmarkFilesRequest)
+      returns (GetBookmarkFilesResponse);
+  rpc SearchFile(SearchFileRequest) returns (SearchFileResponse);
+}
