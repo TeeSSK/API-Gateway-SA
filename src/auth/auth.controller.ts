@@ -1,4 +1,12 @@
-import { Controller, Get, UseGuards, Inject, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Inject,
+  Req,
+  Res,
+  Post,
+} from '@nestjs/common';
 import { GoogleAuthGuard } from './guards/google-oauth.guard';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
@@ -73,5 +81,13 @@ export class AuthController {
     const userId = req.user['id'];
     const refreshToken = req.user['refreshToken'];
     return this.authService.refreshTokens(userId, refreshToken);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post('assignAdmin')
+  assignAdmin(@Req() req: Request) {
+    console.log(req.user);
+    const userId = req.user['id'];
+    return this.authService.signAdminRole(userId);
   }
 }

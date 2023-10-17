@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  OnModuleInit,
+} from '@nestjs/common';
 import {
   SubjectServiceClient,
   GetSubjectByIdRequest,
@@ -20,7 +25,8 @@ export class SubjectService implements OnModuleInit {
       this.client.getService<SubjectServiceClient>(SUBJECT_SERVICE_NAME);
   }
 
-  create(createSubjectRequest: CreateSubjectRequest) {
+  create(createSubjectRequest: CreateSubjectRequest, isAdmin: boolean) {
+    if (!isAdmin) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     return this.subjectService.createSubject(createSubjectRequest).pipe(
       map((response) => {
         return {

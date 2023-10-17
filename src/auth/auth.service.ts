@@ -25,9 +25,13 @@ export class AuthService {
     console.log('login');
     let userExists = await this.usersService.findByEmail(user.email);
     if (!userExists) {
-      userExists = await this.usersService.create({ ...user });
+      userExists = await this.usersService.create({ ...user, isAdmin: false });
     }
-    const tokens = await this.getTokens(userExists._id, userExists.email);
+    const tokens = await this.getTokens(
+      userExists._id,
+      userExists.email,
+      userExists.isAdmin,
+    );
     await this.updateRefreshToken(userExists._id, tokens.refreshToken);
     return tokens;
   }
@@ -49,7 +53,7 @@ export class AuthService {
     console.log('refreshTokens', refreshTokenMatches);
     if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
 
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.isAdmin);
     console.log('renew', tokens);
     return {
       accessToken: tokens.accessToken,
@@ -68,9 +72,19 @@ export class AuthService {
     });
   }
 
+  async signAdminRole(userId: string) {
+    await this.usersService.update(userId, { isAdmin: true });
+    return { msg: 'Admin role assigned' };
+  }
+
+  async unSignAdminRole(userId: string) {
+    await this.usersService.update(userId, { isAdmin: false });
+    return { msg: 'Admin role unassigned' };
+  }
+
   // TODO: add user role
-  async getTokens(id: string, email: string) {
-    const payload = { id, email };
+  async getTokens(id: string, email: string, isAdmin: boolean) {
+    const payload = { id, email, isAdmin };
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get<string>('JWT_ACCESS_SECRET'),

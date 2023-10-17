@@ -1,18 +1,34 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { SubjectService } from './subjects.service';
 import {
   CreateSubjectRequest,
   GetSubjectByIdRequest,
   PaginateSubjectRequest,
 } from '../common/types/subject';
+import { AccessTokenGuard } from 'src/auth/guards/accessToken.guard';
+import { Request } from 'express';
 
 @Controller('subjects')
 export class SubjectsController {
   constructor(private readonly subjectsService: SubjectService) {}
 
   @Post()
-  create(@Body() createSubjectRequest: CreateSubjectRequest) {
-    return this.subjectsService.create(createSubjectRequest);
+  @UseGuards(AccessTokenGuard)
+  create(
+    @Req() req: Request,
+    @Body() createSubjectRequest: CreateSubjectRequest,
+  ) {
+    console.log(req.user);
+    const isAdmin = req.user['isAdmin'];
+    return this.subjectsService.create(createSubjectRequest, isAdmin);
   }
 
   @Get(':id')
