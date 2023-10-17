@@ -3,6 +3,7 @@ import { SubjectService } from './subjects.service';
 import {
   CreateSubjectRequest,
   GetSubjectByIdRequest,
+  PaginateSubjectRequest,
 } from '../common/types/subject';
 
 @Controller('subjects')
@@ -17,12 +18,12 @@ export class SubjectsController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const subjectId: GetSubjectByIdRequest = { id: Number(id) };
-    const subject = await this.subjectsService.findById(subjectId);
+    const subject = this.subjectsService.findById(subjectId);
     return subject;
   }
 
   @Get()
-  findAll() {
-    return 'This action returns all subjects';
+  findAll(@Body() paginateSubjectRequest: PaginateSubjectRequest) {
+    return this.subjectsService.paginateSubjects(paginateSubjectRequest);
   }
 }

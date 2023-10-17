@@ -6,6 +6,6 @@ import { SubjectService } from './subjects.service';
   imports: [],
   controllers: [SubjectsController],
   providers: [SubjectService],
-  // exports: [SubjectsService],
+  exports: [SubjectService],
 })
 export class SubjectModule {}
