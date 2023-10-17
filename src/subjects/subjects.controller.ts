@@ -38,8 +38,16 @@ export class SubjectsController {
     return subject;
   }
 
-  @Get()
-  findAll(@Body() paginateSubjectRequest: PaginateSubjectRequest) {
-    return this.subjectsService.paginateSubjects(paginateSubjectRequest);
+  @Get('pages/:page')
+  findAll(
+    @Param('page') page: string,
+    @Body() paginateSubjectRequest: Omit<PaginateSubjectRequest, 'pageNumber'>,
+  ) {
+    const pageNumber = Number(page);
+    const paginateSubjectDto: PaginateSubjectRequest = {
+      pageNumber,
+      ...paginateSubjectRequest,
+    };
+    return this.subjectsService.paginateSubjects(paginateSubjectDto);
   }
 }
