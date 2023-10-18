@@ -42,7 +42,7 @@ export class SubjectsController {
     return subject;
   }
 
-  @Get('pages/:page')
+  @Post('pages/:page')
   findAll(
     @Param('page') page: string,
     @Body() paginateSubjectRequest: Omit<PaginateSubjectRequest, 'pageNumber'>,
