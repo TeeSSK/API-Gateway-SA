@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -23,7 +24,20 @@ export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Get()
-  searchFiles(@Body() searchFileRequest: SearchFileRequest) {
+  searchFiles(
+    @Query()
+    query: {
+      subjectId: string;
+      ownerUserId: string;
+      fileName: string;
+    },
+  ) {
+    const searchFileRequest: SearchFileRequest = {
+      subjectId: query.subjectId ?? '',
+      ownerUserId: query.ownerUserId ?? '',
+      fileName: query.fileName ?? '',
+    };
+
     return this.filesService.searchFiles(searchFileRequest);
   }
 
