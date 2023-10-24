@@ -44,7 +44,11 @@ export class SubjectService implements OnModuleInit {
   }
 
   findById(getSubjectByIdRequest: GetSubjectByIdRequest) {
-    return this.subjectService.getSubjectById(getSubjectByIdRequest).pipe(
+    const subject = this.subjectService.getSubjectById(getSubjectByIdRequest);
+    if (!subject) {
+      throw new HttpException('Subject not found', HttpStatus.NOT_FOUND);
+    }
+    return subject.pipe(
       map((response) => {
         return {
           subject: {
@@ -63,7 +67,19 @@ export class SubjectService implements OnModuleInit {
   paginateSubjects(paginateSubjectRequest: PaginateSubjectRequest) {
     console.log('paginateSubjects');
     console.log(paginateSubjectRequest);
-    return this.subjectService.paginateSubjects(paginateSubjectRequest).pipe(
+    const subjects = this.subjectService.paginateSubjects(
+      paginateSubjectRequest,
+    );
+    if (!subjects) {
+      return {
+        subjects: [],
+        pageNumber: 0,
+        perPage: 0,
+        pageCount: 0,
+        totalCount: 0,
+      };
+    }
+    return subjects.pipe(
       map((response) => {
         const subjects = response.subjects.map((subject) => ({
           ...subject,
