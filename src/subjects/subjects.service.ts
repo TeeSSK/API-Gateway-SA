@@ -10,10 +10,13 @@ import {
   SUBJECT_SERVICE_NAME,
   CreateSubjectRequest,
   PaginateSubjectRequest,
+  UpdateSubjectRequest,
+  DeleteSubjectRequest,
 } from '../common/types/subject';
 import { ClientGrpc, Client } from '@nestjs/microservices';
 import { grpcClientOptions } from './grpc-subject.option';
 import { map, take } from 'rxjs';
+import { Subject } from 'src/common/types/entity';
 
 @Injectable()
 export class SubjectService implements OnModuleInit {
@@ -35,6 +38,48 @@ export class SubjectService implements OnModuleInit {
             id: (response.subject.id as any).low,
             semester: (response.subject.semester as any).low,
             year: (response.subject.year as any).low,
+          },
+        };
+      }),
+
+      take(1),
+    );
+  }
+
+  update(updateSubjectRequest: UpdateSubjectRequest, isAdmin: boolean) {
+    if (!isAdmin) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    const subject = this.subjectService.updateSubject(updateSubjectRequest);
+    if (!subject) {
+      throw new HttpException('Subject not found', HttpStatus.NOT_FOUND);
+    }
+    return subject.pipe(
+      map((response) => {
+        const subject = response.subject;
+        const newShapedSubject = this.shapedSubject(subject);
+        return {
+          subject: {
+            ...newShapedSubject,
+          },
+        };
+      }),
+
+      take(1),
+    );
+  }
+
+  delete(deleteSubjectRequest: DeleteSubjectRequest, isAdmin: boolean) {
+    if (!isAdmin) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    const subject = this.subjectService.deleteSubject(deleteSubjectRequest);
+    if (!subject) {
+      throw new HttpException('Subject not found', HttpStatus.NOT_FOUND);
+    }
+    return subject.pipe(
+      map((response) => {
+        const subject = response.subject;
+        const newShapedSubject = this.shapedSubject(subject);
+        return {
+          subject: {
+            ...newShapedSubject,
           },
         };
       }),
@@ -99,5 +144,14 @@ export class SubjectService implements OnModuleInit {
 
       take(1),
     );
+  }
+
+  shapedSubject(subject: Subject) {
+    return {
+      ...subject,
+      id: (subject.id as any).low,
+      semester: (subject.semester as any).low,
+      year: (subject.year as any).low,
+    };
   }
 }
