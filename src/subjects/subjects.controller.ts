@@ -11,10 +11,12 @@ import {
 } from '@nestjs/common';
 import { SubjectService } from './subjects.service';
 import {
+  CreateSectionRequest,
   CreateSubjectRequest,
   DeleteSubjectRequest,
   GetSubjectByIdRequest,
   PaginateSubjectRequest,
+  UpdateSectionRequest,
   UpdateSubjectRequest,
 } from '../common/types/subject';
 import { AccessTokenGuard } from 'src/auth/guards/accessToken.guard';
@@ -86,5 +88,47 @@ export class SubjectsController {
       ...paginateSubjectRequest,
     };
     return this.subjectsService.paginateSubjects(paginateSubjectDto);
+  }
+
+  @Post('section')
+  @UseGuards(AccessTokenGuard)
+  createSection(
+    @Req() req: Request,
+    @Body() createSectionRequest: Omit<CreateSectionRequest, 'isAdmin'>,
+  ) {
+    console.log(req.user);
+    const isAdmin = req.user['isAdmin'];
+    const createSectionDto: CreateSectionRequest = {
+      ...createSectionRequest,
+      isAdmin,
+    };
+    return this.subjectsService.createSection(createSectionDto, isAdmin);
+  }
+
+  @Put('section/:id')
+  @UseGuards(AccessTokenGuard)
+  updateSection(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() updateSectionRequest: Omit<UpdateSectionRequest, 'isAdmin'>,
+  ) {
+    const sectionId = Number(id);
+    console.log(req.user);
+    const isAdmin = req.user['isAdmin'];
+    const updateSectionDto: UpdateSectionRequest = {
+      ...updateSectionRequest,
+      id: sectionId,
+      isAdmin,
+    };
+    return this.subjectsService.updateSection(updateSectionDto, isAdmin);
+  }
+
+  @Delete('section/:id')
+  @UseGuards(AccessTokenGuard)
+  deleteSection(@Param('id') id: string, @Req() req: Request) {
+    const sectionId = Number(id);
+    const isAdmin = req.user['isAdmin'];
+    const deleteSectionDto: DeleteSubjectRequest = { id: sectionId, isAdmin };
+    return this.subjectsService.deleteSection(deleteSectionDto, isAdmin);
   }
 }

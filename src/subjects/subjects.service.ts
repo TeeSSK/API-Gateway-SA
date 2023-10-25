@@ -12,11 +12,13 @@ import {
   PaginateSubjectRequest,
   UpdateSubjectRequest,
   DeleteSubjectRequest,
+  CreateSectionRequest,
+  UpdateSectionRequest,
 } from '../common/types/subject';
 import { ClientGrpc, Client } from '@nestjs/microservices';
 import { grpcClientOptions } from './grpc-subject.option';
 import { map, take } from 'rxjs';
-import { Subject } from 'src/common/types/entity';
+import { Section, Subject } from 'src/common/types/entity';
 
 @Injectable()
 export class SubjectService implements OnModuleInit {
@@ -32,12 +34,11 @@ export class SubjectService implements OnModuleInit {
     if (!isAdmin) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     return this.subjectService.createSubject(createSubjectRequest).pipe(
       map((response) => {
+        const subject = response.subject;
+        const newShapedSubject = this.shapedSubject(subject);
         return {
           subject: {
-            ...response.subject,
-            id: (response.subject.id as any).low,
-            semester: (response.subject.semester as any).low,
-            year: (response.subject.year as any).low,
+            ...newShapedSubject,
           },
         };
       }),
@@ -95,12 +96,11 @@ export class SubjectService implements OnModuleInit {
     }
     return subject.pipe(
       map((response) => {
+        const subject = response.subject;
+        const newShapedSubject = this.shapedSubject(subject);
         return {
           subject: {
-            ...response.subject,
-            id: (response.subject.id as any).low,
-            semester: (response.subject.semester as any).low,
-            year: (response.subject.year as any).low,
+            ...newShapedSubject,
           },
         };
       }),
@@ -152,6 +152,75 @@ export class SubjectService implements OnModuleInit {
       id: (subject.id as any).low,
       semester: (subject.semester as any).low,
       year: (subject.year as any).low,
+    };
+  }
+
+  createSection(createSectionRequest: CreateSectionRequest, isAdmin: boolean) {
+    if (!isAdmin) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    const section = this.subjectService.createSection(createSectionRequest);
+    return section.pipe(
+      map((response) => {
+        const section = response.section;
+        const newShapedSection = this.shapedSection(section);
+        return {
+          section: {
+            ...newShapedSection,
+          },
+        };
+      }),
+
+      take(1),
+    );
+  }
+
+  updateSection(updateSectionRequest: UpdateSectionRequest, isAdmin: boolean) {
+    if (!isAdmin) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    const section = this.subjectService.updateSection(updateSectionRequest);
+    if (!section) {
+      throw new HttpException('Section not found', HttpStatus.NOT_FOUND);
+    }
+    return section.pipe(
+      map((response) => {
+        const section = response.section;
+        const newShapedSection = this.shapedSection(section);
+        return {
+          section: {
+            ...newShapedSection,
+          },
+        };
+      }),
+
+      take(1),
+    );
+  }
+
+  deleteSection(deleteSectionRequest: DeleteSubjectRequest, isAdmin: boolean) {
+    if (!isAdmin) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    const section = this.subjectService.deleteSection(deleteSectionRequest);
+    if (!section) {
+      throw new HttpException('Section not found', HttpStatus.NOT_FOUND);
+    }
+    return section.pipe(
+      map((response) => {
+        const section = response.section;
+        const newShapedSection = this.shapedSection(section);
+        return {
+          section: {
+            ...newShapedSection,
+          },
+        };
+      }),
+
+      take(1),
+    );
+  }
+
+  shapedSection(section: Section) {
+    return {
+      ...section,
+      id: (section.id as any).low,
+      subjectId: (section.subjectId as any).low,
+      number: (section.number as any).low,
     };
   }
 }
