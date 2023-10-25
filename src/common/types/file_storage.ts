@@ -92,6 +92,8 @@ export interface FileUploadServiceClient {
 
   download(request: FileDownloadRequest): Observable<FileDownloadResponse>;
 
+  downloadWithAuth(request: FileDownloadRequest): Observable<FileDownloadResponse>;
+
   delete(request: FileDeleteRequest): Observable<FileDeleteResponse>;
 
   shareFile(request: ShareFileRequest): Observable<ShareFileResponse>;
@@ -111,6 +113,8 @@ export interface FileUploadServiceController {
   ): Promise<FileUploadResponse> | Observable<FileUploadResponse> | FileUploadResponse;
 
   download(request: FileDownloadRequest): Observable<FileDownloadResponse>;
+
+  downloadWithAuth(request: FileDownloadRequest): Observable<FileDownloadResponse>;
 
   delete(request: FileDeleteRequest): Promise<FileDeleteResponse> | Observable<FileDeleteResponse> | FileDeleteResponse;
 
@@ -137,6 +141,7 @@ export function FileUploadServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = [
       "download",
+      "downloadWithAuth",
       "delete",
       "shareFile",
       "createBookmarkFile",

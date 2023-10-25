@@ -88,6 +88,8 @@ message SearchFileResponse {
 service FileUploadService {
   rpc Upload(stream FileUploadRequest) returns (FileUploadResponse);
   rpc Download(FileDownloadRequest) returns (stream FileDownloadResponse);
+  rpc DownloadWithAuth(FileDownloadRequest)
+      returns (stream FileDownloadResponse);
   rpc Delete(FileDeleteRequest) returns (FileDeleteResponse);
   rpc ShareFile(ShareFileRequest) returns (ShareFileResponse);
   rpc CreateBookmarkFile(CreateBookmarkFileRequest)
