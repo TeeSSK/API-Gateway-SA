@@ -19,7 +19,7 @@ message Subject {
 	string subject_id = 2;
 	string name = 3;
 	int64 semester = 4;
-	repeated int64 section_ids = 5;
+	repeated Section sections = 5;
 	int64 year = 6;
 	string faculty = 7;
 	string description = 8;
@@ -32,6 +32,7 @@ message SubjectMetadata {
 	string name = 3;
 	int64 semester = 4;
 	int64 year = 5;
+	repeated int64 section_numbers = 6;
 }
 
 message Instructor {

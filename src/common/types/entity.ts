@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-export const protobufPackage = "subject";
+export const protobufPackage = 'subject';
 
 export interface Section {
   id: number;
@@ -15,7 +15,7 @@ export interface Subject {
   subjectId: string;
   name: string;
   semester: number;
-  sectionIds: number[];
+  sections: Section[];
   year: number;
   faculty: string;
   description: string;
@@ -28,6 +28,7 @@ export interface SubjectMetadata {
   name: string;
   semester: number;
   year: number;
+  sectionNumbers: number[];
 }
 
 export interface Instructor {
@@ -46,10 +47,8 @@ export interface InstructorMetadata {
   fullName: string;
 }
 
-export interface PostMetadata {
-}
+export interface PostMetadata {}
 
-export interface FileMetadata {
-}
+export interface FileMetadata {}
 
-export const SUBJECT_PACKAGE_NAME = "subject";
+export const SUBJECT_PACKAGE_NAME = 'subject';
