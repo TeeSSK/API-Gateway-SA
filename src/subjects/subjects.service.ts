@@ -97,10 +97,15 @@ export class SubjectService implements OnModuleInit {
     return subject.pipe(
       map((response) => {
         const subject = response.subject;
+        const sections = response.subject.sections;
         const newShapedSubject = this.shapedSubject(subject);
+        const newShapedSections = sections.map((section) =>
+          this.shapedSection(section),
+        );
         return {
           subject: {
             ...newShapedSubject,
+            sections: newShapedSections,
           },
         };
       }),
