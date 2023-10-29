@@ -16,6 +16,7 @@ import { FilesService } from './files.service';
 import {
   CreateBookmarkFileRequest,
   DeleteBookmarkFileRequest,
+  FileDeleteRequest,
   FileDownloadRequest,
   FileUploadRequest,
   GetBookmarkFilesRequest,
@@ -84,6 +85,18 @@ export class FilesController {
 
     // Send the Uint8Array as the response body
     res.send(Buffer.from(fileContent));
+  }
+
+  @Delete()
+  @UseGuards(AccessTokenGuard)
+  deleteFile(
+    @Body() body: Omit<FileDeleteRequest, 'userId'>,
+    @Req() req: Request,
+  ) {
+    const userId = req.user['id'];
+    const id = body.fileId;
+    const fileDeleteRequest: FileDeleteRequest = { fileId: id, userId };
+    return this.filesService.delete(fileDeleteRequest);
   }
 
   @Get('bookmark')
