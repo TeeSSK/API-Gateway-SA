@@ -131,12 +131,19 @@ export class SubjectService implements OnModuleInit {
     }
     return subjects.pipe(
       map((response) => {
-        const subjects = response.subjects.map((subject) => ({
-          ...subject,
-          id: (subject.id as any).low,
-          semester: (subject.semester as any).low,
-          year: (subject.year as any).low,
-        }));
+        const subjects = response.subjects.map((subject) => {
+          const sections = subject.sectionNumbers;
+          const newShapedSections = sections
+            ? sections.map((section) => (section as any).low)
+            : [];
+          return {
+            ...subject,
+            id: (subject.id as any).low,
+            semester: (subject.semester as any).low,
+            year: (subject.year as any).low,
+            sectionNumbers: newShapedSections,
+          };
+        });
         return {
           ...response,
           pageNumber: (response.pageNumber as any).low,
