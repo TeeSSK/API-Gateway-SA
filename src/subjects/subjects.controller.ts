@@ -13,6 +13,7 @@ import { SubjectService } from './subjects.service';
 import {
   CreateSectionRequest,
   CreateSubjectRequest,
+  DeleteSectionRequest,
   DeleteSubjectRequest,
   GetSubjectByIdRequest,
   PaginateSubjectRequest,
@@ -32,6 +33,7 @@ export class SubjectsController {
     @Req() req: Request,
     @Body() createSubjectRequest: Omit<CreateSubjectRequest, 'isAdmin'>,
   ) {
+    console.log('createSubject');
     console.log(req.user);
     const isAdmin = req.user['isAdmin'];
     const createSubjectDto: CreateSubjectRequest = {
@@ -41,14 +43,14 @@ export class SubjectsController {
     return this.subjectsService.create(createSubjectDto, isAdmin);
   }
 
-  @Put(':id')
+  @Put()
   @UseGuards(AccessTokenGuard)
   async update(
-    @Param('id') id: string,
     @Req() req: Request,
-    @Body() updateSubjectRequest: Omit<UpdateSubjectRequest, 'id' | 'isAdmin'>,
+    @Body() updateSubjectRequest: Omit<UpdateSubjectRequest, 'isAdmin'>,
   ) {
-    const subjectId = Number(id);
+    console.log('updateSubject');
+    const subjectId = Number(updateSubjectRequest.id);
     const isAdmin = req.user['isAdmin'];
     console.log(req.user);
     const updateSubjectDto: UpdateSubjectRequest = {
@@ -60,10 +62,14 @@ export class SubjectsController {
     return subject;
   }
 
-  @Delete(':id')
+  @Delete()
   @UseGuards(AccessTokenGuard)
-  async delete(@Param('id') id: string, @Req() req: Request) {
-    const subjectId = Number(id);
+  async delete(
+    @Body() deleteSubjectRequest: Omit<DeleteSubjectRequest, 'isAdmin'>,
+    @Req() req: Request,
+  ) {
+    console.log('deleteSubject');
+    const subjectId = Number(deleteSubjectRequest.id);
     const isAdmin = req.user['isAdmin'];
     const deleteSubjectDto: DeleteSubjectRequest = { id: subjectId, isAdmin };
     const subject = this.subjectsService.delete(deleteSubjectDto, isAdmin);
@@ -72,6 +78,7 @@ export class SubjectsController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
+    console.log('getSubjectById');
     const subjectId: GetSubjectByIdRequest = { id: Number(id) };
     const subject = this.subjectsService.findById(subjectId);
     return subject;
@@ -82,6 +89,7 @@ export class SubjectsController {
     @Param('page') page: string,
     @Body() paginateSubjectRequest: Omit<PaginateSubjectRequest, 'pageNumber'>,
   ) {
+    console.log('paginateSubject');
     const pageNumber = Number(page);
     const paginateSubjectDto: PaginateSubjectRequest = {
       pageNumber,
@@ -105,14 +113,13 @@ export class SubjectsController {
     return this.subjectsService.createSection(createSectionDto, isAdmin);
   }
 
-  @Put('section/:id')
+  @Put('section')
   @UseGuards(AccessTokenGuard)
   updateSection(
     @Req() req: Request,
-    @Param('id') id: string,
     @Body() updateSectionRequest: Omit<UpdateSectionRequest, 'isAdmin'>,
   ) {
-    const sectionId = Number(id);
+    const sectionId = Number(updateSectionRequest.id);
     console.log(req.user);
     const isAdmin = req.user['isAdmin'];
     const updateSectionDto: UpdateSectionRequest = {
@@ -123,12 +130,15 @@ export class SubjectsController {
     return this.subjectsService.updateSection(updateSectionDto, isAdmin);
   }
 
-  @Delete('section/:id')
+  @Delete('section')
   @UseGuards(AccessTokenGuard)
-  deleteSection(@Param('id') id: string, @Req() req: Request) {
-    const sectionId = Number(id);
+  deleteSection(
+    @Req() req: Request,
+    @Body() deleteSectionRequest: Omit<DeleteSectionRequest, 'isAdmin'>,
+  ) {
+    const sectionId = Number(deleteSectionRequest.id);
     const isAdmin = req.user['isAdmin'];
-    const deleteSectionDto: DeleteSubjectRequest = { id: sectionId, isAdmin };
+    const deleteSectionDto: DeleteSectionRequest = { id: sectionId, isAdmin };
     return this.subjectsService.deleteSection(deleteSectionDto, isAdmin);
   }
 }

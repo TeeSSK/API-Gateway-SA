@@ -99,9 +99,9 @@ export class SubjectService implements OnModuleInit {
         const subject = response.subject;
         const sections = response.subject.sections;
         const newShapedSubject = this.shapedSubject(subject);
-        const newShapedSections = sections.map((section) =>
-          this.shapedSection(section),
-        );
+        const newShapedSections = sections
+          ? sections.map((section) => this.shapedSection(section))
+          : [];
         return {
           subject: {
             ...newShapedSubject,
@@ -179,6 +179,7 @@ export class SubjectService implements OnModuleInit {
   }
 
   updateSection(updateSectionRequest: UpdateSectionRequest, isAdmin: boolean) {
+    console.log('updateSection', updateSectionRequest);
     if (!isAdmin) throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     const section = this.subjectService.updateSection(updateSectionRequest);
     if (!section) {
