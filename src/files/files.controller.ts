@@ -1,22 +1,29 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Query,
   Req,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import {
+  CreateBookmarkFileRequest,
+  DeleteBookmarkFileRequest,
+  FileDownloadRequest,
   FileUploadRequest,
+  GetBookmarkFilesRequest,
   SearchFileRequest,
 } from 'src/common/types/file_storage';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AccessTokenGuard } from 'src/auth/guards/accessToken.guard';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { fileUploadDto } from './dto/upload-file.dto';
 
 @Controller('files')
@@ -57,7 +64,66 @@ export class FilesController {
       userId: userId,
       subjectId: subjectId,
     };
-    return this.filesService.uploadFile(fileUploadRequest);
+    return this.filesService.upload(fileUploadRequest);
+  }
+
+  @Get('download/:fileId')
+  async downloadFile(@Param('fileId') id: string, @Res() res: Response) {
+    const fileDownloadRequest: FileDownloadRequest = { fileId: id, userId: '' };
+    console.log('fileDownloadRequest', fileDownloadRequest);
+    const { fileContent, fileName, fileSize } =
+      await this.filesService.download(fileDownloadRequest);
+    console.log('responseData', { fileContent, fileName, fileSize });
+
+    const contentDisposition = `attachment; filename=${fileName}`;
+    // Set the appropriate response headers
+    res.setHeader('Content-Type', 'application/octet-stream'); // Set the appropriate content type
+    res.setHeader('Content-Disposition', contentDisposition); // Specify the filename
+    res.setHeader('Content-Length', fileContent.length.toString());
+    console.log(fileContent);
+
+    // Send the Uint8Array as the response body
+    res.send(Buffer.from(fileContent));
+  }
+
+  @Get('bookmark')
+  @UseGuards(AccessTokenGuard)
+  getBookmarkFile(@Req() req: Request) {
+    const userId = req.user['id'];
+    const getBookmarkFileRequest: GetBookmarkFilesRequest = {
+      userId,
+    };
+    return this.filesService.getBookmark(getBookmarkFileRequest);
+  }
+
+  @Post('bookmark')
+  @UseGuards(AccessTokenGuard)
+  createBookmarkFile(
+    @Body() body: Omit<CreateBookmarkFileRequest, 'userId'>,
+    @Req() req: Request,
+  ) {
+    const userId = req.user['id'];
+    const id = body.fileId;
+    const createBookmarkRequest: CreateBookmarkFileRequest = {
+      fileId: id,
+      userId,
+    };
+    return this.filesService.createBookmark(createBookmarkRequest);
+  }
+
+  @Delete('bookmark')
+  @UseGuards(AccessTokenGuard)
+  deleteBookmarkFile(
+    @Body() body: Omit<DeleteBookmarkFileRequest, 'userId'>,
+    @Req() req: Request,
+  ) {
+    const userId = req.user['id'];
+    const id = body.fileId;
+    const deleteBookmarkRequest: DeleteBookmarkFileRequest = {
+      fileId: id,
+      userId,
+    };
+    return this.filesService.deleteBookmark(deleteBookmarkRequest);
   }
 
   @Post('test')
