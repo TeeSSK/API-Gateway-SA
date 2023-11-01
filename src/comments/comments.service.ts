@@ -3,6 +3,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { catchError, lastValueFrom, map } from 'rxjs';
 import { CreateCommentRequestDto } from 'src/common/types/comment';
 import * as amqp from 'amqplib';
+import { TOPIC_SERVICE_URL } from 'src/common/constants/service-url';
 
 @Injectable()
 export class CommentService {
@@ -11,7 +12,7 @@ export class CommentService {
   private connection: amqp.Connection;
   private channel: amqp.Channel;
 
-  topicUrl = 'http://localhost:4000';
+  topicUrl = TOPIC_SERVICE_URL;
 
   async connect() {
     console.log('Connecting to RabbitMQ');

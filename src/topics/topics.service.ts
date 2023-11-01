@@ -7,7 +7,7 @@ import { CreateTopicRequestDto } from 'src/common/types/topic';
 export class TopicService {
   constructor(private readonly httpService: HttpService) {}
 
-  topicUrl = 'http://localhost:4000';
+  topicUrl = process.env.TOPIC_SERVICE_URL;
 
   async getTopics() {
     const response = this.httpService
