@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { TopicsController } from './topics.controller';
-import { TopicsService } from './topics.service';
+import { TopicService } from './topics.service';
 
 @Module({
-  imports: [],
+  imports: [
+    HttpModule.register({
+      timeout: 5000,
+      maxRedirects: 5,
+    }),
+  ],
   controllers: [TopicsController],
-  providers: [TopicsService],
-  exports: [TopicsService],
+  providers: [TopicService],
+  exports: [TopicService],
 })
 export class TopicModule {}
