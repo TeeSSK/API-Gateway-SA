@@ -9,12 +9,16 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './users/users.module';
 import { SubjectModule } from './subjects/subjects.module';
 import { FileModule } from './files/files.module';
+import { TopicModule } from './topics/topics.module';
+import { CommentModule } from './comments/comments.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
     SubjectModule,
+    TopicModule,
+    CommentModule,
     FileModule,
     ConfigModule.forRoot({
       envFilePath: '.env.development.local',
