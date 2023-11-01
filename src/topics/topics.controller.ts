@@ -1,6 +1,16 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { TopicService } from './topics.service';
 import { CreateTopicRequestDto } from 'src/common/types/topic';
+import { AccessTokenGuard } from 'src/auth/guards/accessToken.guard';
 
 @Controller('topics')
 export class TopicsController {
@@ -17,7 +27,16 @@ export class TopicsController {
   }
 
   @Post()
-  createTopic(@Body() createTopicDto: CreateTopicRequestDto) {
-    return this.topicService.createTopic(createTopicDto);
+  @UseGuards(AccessTokenGuard)
+  createTopic(
+    @Req() req: Request,
+    @Body() createTopicDto: Omit<CreateTopicRequestDto, 'creatorId'>,
+  ) {
+    const userId = req.user['id'];
+    const createTopicRequest = {
+      ...createTopicDto,
+      creatorId: userId,
+    };
+    return this.topicService.createTopic(createTopicRequest);
   }
 }

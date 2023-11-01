@@ -1,6 +1,17 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { CommentService } from './comments.service';
 import { CreateCommentRequestDto } from 'src/common/types/comment';
+import { AccessTokenGuard } from 'src/auth/guards/accessToken.guard';
 
 @Controller('comments')
 export class CommentsController {
@@ -19,16 +30,25 @@ export class CommentsController {
   }
 
   @Post()
-  async createComment(@Body() createCommentDto: CreateCommentRequestDto) {
+  @UseGuards(AccessTokenGuard)
+  async createComment(
+    @Req() req: Request,
+    @Body() createCommentDto: Omit<CreateCommentRequestDto, 'authorId'>,
+  ) {
     try {
       // Process the comment creation logic here
       console.log('createCommentDto', createCommentDto);
+      const userId = req.user['id'];
+      const createCommentRequest = {
+        ...createCommentDto,
+        authorId: userId,
+      };
       // Then publish a message to RabbitMQ
       await this.commentService.connect();
       await this.commentService.publishMessage(
         'comment_worker',
         'post.comment.create',
-        { ...createCommentDto },
+        { ...createCommentRequest },
       );
       const comment = this.commentService;
       setTimeout(async function () {
