@@ -3,8 +3,6 @@ version: '3'
 services:
   gateway-app:
     build: .
-    image: cu-overflow/api-gateway
+    image: cu-overflow/gateway-app
     container_name: gateway-app
     restart: always
-    env_file:
-      - .env
