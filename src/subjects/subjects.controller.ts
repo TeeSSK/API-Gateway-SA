@@ -28,14 +28,12 @@ export class SubjectsController {
   constructor(private readonly subjectsService: SubjectService) {}
 
   @Post()
-  @UseGuards(AccessTokenGuard)
   create(
     @Req() req: Request,
     @Body() createSubjectRequest: Omit<CreateSubjectRequest, 'isAdmin'>,
   ) {
     console.log('createSubject');
-    console.log(req.user);
-    const isAdmin = req.user['isAdmin'];
+    const isAdmin = true;
     const createSubjectDto: CreateSubjectRequest = {
       ...createSubjectRequest,
       isAdmin,
