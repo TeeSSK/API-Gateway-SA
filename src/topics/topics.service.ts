@@ -1,13 +1,14 @@
 import { HttpService } from '@nestjs/axios';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { catchError, lastValueFrom, map } from 'rxjs';
+import { TOPIC_SERVICE_URL } from 'src/common/constants/service-url';
 import { CreateTopicRequestDto } from 'src/common/types/topic';
 
 @Injectable()
 export class TopicService {
   constructor(private readonly httpService: HttpService) {}
 
-  topicUrl = process.env.TOPIC_SERVICE_URL;
+  topicUrl = TOPIC_SERVICE_URL;
 
   async getTopics() {
     const response = this.httpService

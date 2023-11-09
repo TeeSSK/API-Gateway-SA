@@ -17,7 +17,7 @@ export class CommentService {
   async connect() {
     console.log('Connecting to RabbitMQ');
     this.connection = await amqp.connect(
-      'amqp://guest:guest@localhost:5672/%2F',
+      'amqp://guest:guest@rabbitMQ:5672/%2F',
     );
     this.channel = await this.connection.createChannel();
     // console.log(this.channel);
